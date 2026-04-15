@@ -1,0 +1,80 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"task.autoDetect": "off",
+		"files.exclude": {
+			"**/.cache": true,
+		},
+		"search.exclude": {
+			"**/.cache": true,
+		},
+		"[cpp]": {
+			"editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+			"editor.formatOnSave": true,
+			"editor.formatOnPaste": true,
+		},
+		"[markdown]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.formatOnSave": true,
+			"editor.formatOnPaste": true,
+			"editor.wordWrap": "on",
+		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Build & Run (Debug)",
+				"type": "shell",
+				"command": "cmake --preset debug && cmake --build --preset debug && ./build/debug/QSwapt",
+				"group": "build",
+				"problemMatcher": []
+			},
+			{
+				"label": "Build & Run (Release)",
+				"type": "shell",
+				"command": "cmake --preset release && cmake --build --preset release && ./build/release/QSwapt",
+				"group": "build",
+				"problemMatcher": []
+			},
+			{
+				"label": "Build & Run (ASan)",
+				"type": "shell",
+				"command": "cmake --preset asan && cmake --build --preset asan && ./build/asan/QSwapt",
+				"group": "build",
+				"problemMatcher": []
+			},
+			{
+				"label": "clang-tidy: all",
+				"type": "shell",
+				"command": "run-clang-tidy -p build/debug -quiet $(git ls-files \"src/*.cpp\" \"src/*.h\")",
+				"group": "build",
+				"presentation": {
+					"panel": "shared"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "clang-format: all",
+				"type": "shell",
+				"command": "git ls-files \"src/*.cpp\" \"src/*.h\" | xargs clang-format -i",
+				"group": "build",
+				"presentation": {
+					"panel": "shared"
+				},
+				"problemMatcher": []
+			}
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"llvm-vs-code-extensions.vscode-clangd",
+			"ms-vscode.cmake-tools",
+			"esbenp.prettier-vscode"
+		]
+	}
+}

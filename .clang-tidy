@@ -1,0 +1,22 @@
+---
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers
+WarningsAsErrors: ""
+HeaderFilterRegex: "(^|/)src/.*"
+FormatStyle: file
+CheckOptions:
+  - key: modernize-use-nullptr.NullMacros
+    value: "NULL"
+  - key: modernize-loop-convert.MinConfidence
+    value: reasonable
+...

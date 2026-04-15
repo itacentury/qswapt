@@ -1,0 +1,42 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 23, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "$env{QT_PREFIX_PATH}",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_IPO": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "inherits": "debug",
+      "cacheVariables": {
+        "ENABLE_SANITIZER_ADDRESS": "ON",
+        "ENABLE_SANITIZER_UNDEFINED": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug",   "configurePreset": "debug"   },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "asan",    "configurePreset": "asan"    }
+  ]
+}

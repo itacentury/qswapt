@@ -1,0 +1,36 @@
+add_library(project_sanitizers INTERFACE)
+
+option(ENABLE_SANITIZER_ADDRESS   "Enable AddressSanitizer"   OFF)
+option(ENABLE_SANITIZER_UNDEFINED "Enable UndefinedBehaviorSanitizer" OFF)
+option(ENABLE_SANITIZER_THREAD    "Enable ThreadSanitizer"    OFF)
+option(ENABLE_SANITIZER_LEAK      "Enable LeakSanitizer"      OFF)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    set(_sanitizers "")
+
+    if(ENABLE_SANITIZER_ADDRESS)
+        list(APPEND _sanitizers "address")
+    endif()
+    if(ENABLE_SANITIZER_UNDEFINED)
+        list(APPEND _sanitizers "undefined")
+    endif()
+    if(ENABLE_SANITIZER_LEAK)
+        list(APPEND _sanitizers "leak")
+    endif()
+    if(ENABLE_SANITIZER_THREAD)
+        if("address" IN_LIST _sanitizers OR "leak" IN_LIST _sanitizers)
+            message(WARNING "ThreadSanitizer is incompatible with Address/Leak sanitizer; disabling TSan.")
+        else()
+            list(APPEND _sanitizers "thread")
+        endif()
+    endif()
+
+    if(_sanitizers)
+        list(JOIN _sanitizers "," _sanitizer_flag)
+        target_compile_options(project_sanitizers INTERFACE
+            -fsanitize=${_sanitizer_flag} -fno-omit-frame-pointer -g)
+        target_link_options(project_sanitizers INTERFACE
+            -fsanitize=${_sanitizer_flag})
+        message(STATUS "Sanitizers enabled: ${_sanitizer_flag}")
+    endif()
+endif()
