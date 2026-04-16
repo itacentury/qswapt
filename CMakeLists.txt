@@ -32,6 +32,11 @@ qt_add_executable(${PROJECT_NAME}
     src/mainwindow.ui
 )
 
+qt_add_resources(${PROJECT_NAME}
+    PREFIX "/"
+    FILES resources/stations.txt
+)
+
 add_subdirectory(src/station)
 
 target_link_libraries(${PROJECT_NAME}

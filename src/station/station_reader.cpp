@@ -6,10 +6,11 @@
 #include "station.h"
 
 QList<Station> readStations() {
-  QString filename = QString("%1/src/stations.txt").arg(QDir::currentPath());
+  QString filename = QString(":/resources/stations.txt");
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(0, "error", filename);
+    QMessageBox::warning(0, "Error",
+                         QString("Could not open file: '%1'").arg(filename));
     return {};
   }
 
