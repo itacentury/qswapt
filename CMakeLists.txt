@@ -32,9 +32,12 @@ qt_add_executable(${PROJECT_NAME}
     src/mainwindow.ui
 )
 
+add_subdirectory(src/station)
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt6::Widgets
         project_warnings
         project_sanitizers
+        station_lib
 )
