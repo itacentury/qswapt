@@ -1,7 +1,5 @@
 #include "transport_client.h"
 
-#include <qjsonobject.h>
-
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -51,8 +49,8 @@ void TransportClient::handleReply(QNetworkReply* reply, int stationId) {
       departure.direction = obj.value("direction").toString();
       departure.scheduled = obj.value("plannedWhen").toString();
       departure.expected = obj.value("when").toString();
-      departure.delay = -1;  // placeholder: need to calc difference between
-                             // plannedWhen and planned
+      departure.delay = QDateTime::fromString(departure.expected)
+                            .secsTo(QDateTime::fromString(departure.scheduled));
 
       departures.append(departure);
     }
