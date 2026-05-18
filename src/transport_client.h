@@ -13,16 +13,17 @@ class TransportClient : public QObject {
  public:
   explicit TransportClient(QObject* parent = nullptr);
 
-  void getDepartures(int stationId);
+  void getDepartures(const QString& stationId);
 
  signals:
-  void departuresReceived(int stationId, const QList<Departure>& departures);
+  void departuresReceived(const QString& stationId,
+                          const QList<Departure>& departures);
   void departuresFailed(QNetworkReply::NetworkError error, int httpStatus,
                         const QString& message);
 
  private:
   QNetworkAccessManager* m_manager;
-  void handleReply(QNetworkReply* reply, int stationId);
+  void handleReply(QNetworkReply* reply, const QString& stationId);
 };
 
 #endif

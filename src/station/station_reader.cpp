@@ -25,7 +25,7 @@ QList<Station> readStations() {
 
     Station station;
     station.name = stationAndId[0];
-    station.id = stationAndId[1].toInt();
+    station.id = stationAndId[1];
     stations.append(station);
   }
 

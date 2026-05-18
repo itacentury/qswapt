@@ -13,14 +13,15 @@ int main(int argc, char* argv[]) {
 
   TransportClient transportClient;
 
-  QObject::connect(&transportClient, &TransportClient::departuresReceived,
-                   [](int stationId, const QList<Departure>& departures) {
-                     qDebug() << "Got" << departures.size()
-                              << "departures for station" << stationId;
-                     for (const auto& departure : departures) {
-                       qDebug() << departure.toString();
-                     }
-                   });
+  QObject::connect(
+      &transportClient, &TransportClient::departuresReceived,
+      [](const QString& stationId, const QList<Departure>& departures) {
+        qDebug() << "Got" << departures.size() << "departures for station"
+                 << stationId;
+        for (const auto& departure : departures) {
+          qDebug() << departure.toString();
+        }
+      });
 
   QObject::connect(&transportClient, &TransportClient::departuresFailed,
                    [](QNetworkReply::NetworkError error, int httpStatus,
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
                          << "Error code: " << error << "http:" << httpStatus
                          << "body/msg:" << message;
                    });
-  transportClient.getDepartures(8000013);
+  transportClient.getDepartures("8000013");
 
   return QApplication::exec();
 }

@@ -12,7 +12,7 @@ TransportClient::TransportClient(QObject* parent)
     : QObject(parent), m_manager(new QNetworkAccessManager(this)) {
 }
 
-void TransportClient::getDepartures(int stationId) {
+void TransportClient::getDepartures(const QString& stationId) {
   QUrl url(QString("https://v6.db.transport.rest/stops/%1/departures")
                .arg(stationId));
   QNetworkRequest request{url};
@@ -25,7 +25,8 @@ void TransportClient::getDepartures(int stationId) {
           [this, reply, stationId]() { handleReply(reply, stationId); });
 }
 
-void TransportClient::handleReply(QNetworkReply* reply, int stationId) {
+void TransportClient::handleReply(QNetworkReply* reply,
+                                  const QString& stationId) {
   if (reply->error() == QNetworkReply::NoError) {
     QByteArray content = reply->readAll();
     auto jsonContent = QJsonDocument::fromJson(content);
