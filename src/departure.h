@@ -8,7 +8,7 @@ struct Departure {
   QString direction;
   QString scheduled;
   QString expected;
-  qint64 delay{};
+  int delay{};
 
   [[nodiscard]] QString toString() const {
     return QString(
