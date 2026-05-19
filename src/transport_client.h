@@ -26,7 +26,7 @@ class TransportClient : public QObject {
   QNetworkAccessManager* m_manager;
   void handleReply(QNetworkReply* reply, const QString& stationId);
 
-  static constexpr std::string_view kBaseUrl = "https://v6.db.transport.rest";
+  static constexpr QStringView kBaseUrl = u"https://v6.db.transport.rest";
   static constexpr int kRequestTimeoutMs = 5000;
 };
 
