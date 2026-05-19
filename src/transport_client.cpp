@@ -26,6 +26,29 @@ void TransportClient::getDepartures(const QString& stationId) {
           [this, reply, stationId]() { handleReply(reply, stationId); });
 }
 
+QList<Departure> TransportClient::extractDepartures(
+    const QJsonArray& departuresJson) {
+  QList<Departure> departures;
+
+  for (const auto& jsonObject : departuresJson) {
+    const QJsonObject obj = jsonObject.toObject();
+    Departure departure;
+    departure.line = obj.value("line").toObject().value("name").toString();
+    departure.direction = obj.value("direction").toString();
+    departure.scheduled = obj.value("plannedWhen").toString();
+    departure.expected = obj.value("when").toString();
+    qint64 delayS =
+        QDateTime::fromString(departure.scheduled, Qt::DateFormat::ISODate)
+            .secsTo(QDateTime::fromString(departure.expected,
+                                          Qt::DateFormat::ISODate));
+    departure.delay = qRound(static_cast<double>(delayS) / 60.0);
+
+    departures.append(departure);
+  }
+
+  return departures;
+}
+
 void TransportClient::handleReply(QNetworkReply* reply,
                                   const QString& stationId) {
   QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> scopedReply(reply);
