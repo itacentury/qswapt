@@ -62,8 +62,11 @@ void TransportClient::handleReply(QNetworkReply* reply,
     departure.direction = obj.value("direction").toString();
     departure.scheduled = obj.value("plannedWhen").toString();
     departure.expected = obj.value("when").toString();
-    departure.delay = QDateTime::fromString(departure.expected)
-                          .secsTo(QDateTime::fromString(departure.scheduled));
+    departure.delay =
+        QDateTime::fromString(departure.scheduled, Qt::DateFormat::ISODate)
+            .secsTo(QDateTime::fromString(departure.expected,
+                                          Qt::DateFormat::ISODate)) /
+        60;
 
     departures.append(departure);
   }
