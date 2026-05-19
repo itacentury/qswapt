@@ -26,6 +26,8 @@ void TransportClient::getDepartures(const QString& stationId) {
 
 void TransportClient::handleReply(QNetworkReply* reply,
                                   const QString& stationId) {
+  QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> scopedReply(reply);
+
   if (reply->error() != QNetworkReply::NoError) {
     const int httpStatus =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -67,6 +69,4 @@ void TransportClient::handleReply(QNetworkReply* reply,
   }
 
   emit departuresReceived(stationId, departures);
-
-  reply->deleteLater();
 }
