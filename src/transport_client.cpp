@@ -53,12 +53,12 @@ void TransportClient::handleReply(QNetworkReply* reply,
     return;
   }
 
-  QJsonObject rootObject = jsonContent.object();
-  QJsonArray departuresJson = rootObject.value("departures").toArray();
+  const QJsonObject rootObject = jsonContent.object();
+  const QJsonArray departuresJson = rootObject.value("departures").toArray();
   QList<Departure> departures;
 
   for (const auto& jsonObject : departuresJson) {
-    QJsonObject obj = jsonObject.toObject();
+    const QJsonObject obj = jsonObject.toObject();
     Departure departure;
     departure.line = obj.value("line").toObject().value("name").toString();
     departure.direction = obj.value("direction").toString();
