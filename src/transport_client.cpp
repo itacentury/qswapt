@@ -37,13 +37,15 @@ void TransportClient::handleReply(QNetworkReply* reply,
     return;
   }
 
-  QByteArray content = reply->readAll();
+  const QByteArray content = reply->readAll();
   auto jsonContent = QJsonDocument::fromJson(content);
   if (jsonContent.isNull()) {
+    emit departuresInvalid("Received JSON content is null");
     return;
   }
 
   if (!jsonContent.isObject()) {
+    emit departuresInvalid("Received JSON content is not an object");
     return;
   }
 

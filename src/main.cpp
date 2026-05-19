@@ -22,7 +22,6 @@ int main(int argc, char* argv[]) {
           qDebug() << departure.toString();
         }
       });
-
   QObject::connect(&transportClient, &TransportClient::departuresFailed,
                    [](QNetworkReply::NetworkError error, int httpStatus,
                       const QString& message) {
@@ -30,6 +29,10 @@ int main(int argc, char* argv[]) {
                          << "Error code: " << error << "http:" << httpStatus
                          << "body/msg:" << message;
                    });
+  QObject::connect(
+      &transportClient, &TransportClient::departuresInvalid,
+      [](const QString& message) { qDebug() << "Error: " << message; });
+
   transportClient.getDepartures("8000013");
 
   return QApplication::exec();

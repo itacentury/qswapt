@@ -20,6 +20,7 @@ class TransportClient : public QObject {
                           const QList<Departure>& departures);
   void departuresFailed(QNetworkReply::NetworkError error, int httpStatus,
                         const QString& message);
+  void departuresInvalid(const QString& message);
 
  private:
   QNetworkAccessManager* m_manager;
