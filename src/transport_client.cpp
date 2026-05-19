@@ -27,43 +27,45 @@ void TransportClient::getDepartures(const QString& stationId) {
 
 void TransportClient::handleReply(QNetworkReply* reply,
                                   const QString& stationId) {
-  if (reply->error() == QNetworkReply::NoError) {
-    QByteArray content = reply->readAll();
-    auto jsonContent = QJsonDocument::fromJson(content);
-    if (jsonContent.isNull()) {
-      return;
-    }
-
-    if (!jsonContent.isObject()) {
-      return;
-    }
-
-    QJsonObject rootObject = jsonContent.object();
-    QJsonArray departuresJson = rootObject.value("departures").toArray();
-    QList<Departure> departures;
-
-    for (const auto& jsonObject : departuresJson) {
-      QJsonObject obj = jsonObject.toObject();
-      Departure departure;
-      departure.line = obj.value("line").toObject().value("name").toString();
-      departure.direction = obj.value("direction").toString();
-      departure.scheduled = obj.value("plannedWhen").toString();
-      departure.expected = obj.value("when").toString();
-      departure.delay = QDateTime::fromString(departure.expected)
-                            .secsTo(QDateTime::fromString(departure.scheduled));
-
-      departures.append(departure);
-    }
-
-    emit departuresReceived(stationId, departures);
-  } else {
+  if (reply->error() != QNetworkReply::NoError) {
     const int httpStatus =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "Reply error:" << reply->error() << "http:" << httpStatus
              << "errorString:" << reply->errorString();
     emit departuresFailed(reply->error(), httpStatus,
                           QString::fromUtf8(reply->readAll()));
+
+    return;
   }
+
+  QByteArray content = reply->readAll();
+  auto jsonContent = QJsonDocument::fromJson(content);
+  if (jsonContent.isNull()) {
+    return;
+  }
+
+  if (!jsonContent.isObject()) {
+    return;
+  }
+
+  QJsonObject rootObject = jsonContent.object();
+  QJsonArray departuresJson = rootObject.value("departures").toArray();
+  QList<Departure> departures;
+
+  for (const auto& jsonObject : departuresJson) {
+    QJsonObject obj = jsonObject.toObject();
+    Departure departure;
+    departure.line = obj.value("line").toObject().value("name").toString();
+    departure.direction = obj.value("direction").toString();
+    departure.scheduled = obj.value("plannedWhen").toString();
+    departure.expected = obj.value("when").toString();
+    departure.delay = QDateTime::fromString(departure.expected)
+                          .secsTo(QDateTime::fromString(departure.scheduled));
+
+    departures.append(departure);
+  }
+
+  emit departuresReceived(stationId, departures);
 
   reply->deleteLater();
 }
