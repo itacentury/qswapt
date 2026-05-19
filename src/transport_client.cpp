@@ -1,8 +1,10 @@
 #include "transport_client.h"
 
+#include <QDateTime>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QScopedPointer>
 #include <QUrl>
 #include <QVariant>
 
