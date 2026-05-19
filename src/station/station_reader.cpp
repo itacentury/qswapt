@@ -9,7 +9,7 @@ QList<Station> readStations() {
   QString filename = QString(":/resources/stations.txt");
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(0, "Error",
+    QMessageBox::warning(nullptr, "Error",
                          QString("Could not open file: '%1'").arg(filename));
     return {};
   }
@@ -24,8 +24,8 @@ QList<Station> readStations() {
     }
 
     Station station;
-    station.name = stationAndId[0];
-    station.id = stationAndId[1];
+    station.name = stationAndId.at(0);
+    station.id = stationAndId.at(1);
     stations.append(station);
   }
 
