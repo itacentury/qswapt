@@ -13,12 +13,11 @@ TransportClient::TransportClient(QObject* parent)
 }
 
 void TransportClient::getDepartures(const QString& stationId) {
-  QUrl url(QString("https://v6.db.transport.rest/stops/%1/departures")
-               .arg(stationId));
+  QUrl url(QString("%1/stops/%2/departures").arg(kBaseUrl).arg(stationId));
   QNetworkRequest request{url};
   request.setRawHeader("User-Agent", "QSwapt/0.1");
   request.setRawHeader("Accept", "application/json");
-  request.setTransferTimeout(5000);
+  request.setTransferTimeout(kRequestTimeoutMs);
 
   auto* reply = m_manager->get(request);
   connect(reply, &QNetworkReply::finished, this,
