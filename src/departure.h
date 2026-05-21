@@ -10,7 +10,6 @@ struct Departure {
   QString scheduled;
   std::optional<QString> expected;
   int delay{};
-  bool cancelled = false;
 
   [[nodiscard]] QString toString() const {
     return QString(
@@ -20,8 +19,7 @@ struct Departure {
         .arg(direction)
         .arg(scheduled)
         .arg(expected.value_or("-"))
-        .arg(QString::number(delay))
-        .arg(cancelled ? "true" : "false");
+        .arg(QString::number(delay));
   }
 };
 

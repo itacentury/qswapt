@@ -56,7 +56,6 @@ QList<Departure> TransportClient::extractDepartures(
     departure.scheduled = plannedWhenValue.toString();
     departure.delay =
         delayValue.isNull() ? 0 : qRound(delayValue.toDouble() / 60.0);
-    departure.cancelled = whenValue.isNull();
     if (!whenValue.isNull()) {
       departure.expected = whenValue.toString();
     }
