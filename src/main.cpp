@@ -1,3 +1,5 @@
+#include <qlogging.h>
+
 #include <QApplication>
 #include <QObject>
 
@@ -29,13 +31,14 @@ int main(int argc, char* argv[]) {
   QObject::connect(&transportClient, &TransportClient::departuresFailed,
                    [](QNetworkReply::NetworkError error, int httpStatus,
                       const QString& message) {
-                     qDebug()
-                         << "Error code: " << error << "http:" << httpStatus
-                         << "body/msg:" << message;
+                     qWarning()
+                         << "Error code:" << error << "| http:" << httpStatus
+                         << "| body/msg:" << message;
                    });
-  QObject::connect(
-      &transportClient, &TransportClient::departuresInvalid,
-      [](const QString& message) { qDebug() << "Error: " << message; });
+  QObject::connect(&transportClient, &TransportClient::departuresInvalid,
+                   [](const QString& message) {
+                     qWarning() << "Error message: " << message;
+                   });
 
   transportClient.getDepartures("8000013");
 

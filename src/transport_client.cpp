@@ -82,7 +82,8 @@ void TransportClient::handleReply(QNetworkReply* reply,
     const int httpStatus =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     emit departuresFailed(reply->error(), httpStatus,
-                          QString::fromUtf8(reply->readAll()));
+                          reply->isOpen() ? QString::fromUtf8(reply->readAll())
+                                          : reply->errorString());
 
     return;
   }
