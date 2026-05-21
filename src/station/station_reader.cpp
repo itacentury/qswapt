@@ -1,17 +1,17 @@
 #include <QDir>
 #include <QFile>
-#include <QMessageBox>
+#include <QIODevice>
 #include <QString>
+#include <QStringList>
+#include <QTextStream>
 
 #include "station.h"
 
-QList<Station> readStations() {
+std::optional<QList<Station>> readStations() {
   QString filename = QString(":/resources/stations.txt");
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(nullptr, "Error",
-                         QString("Could not open file: '%1'").arg(filename));
-    return {};
+    return std::nullopt;
   }
 
   QTextStream in(&file);
@@ -28,8 +28,6 @@ QList<Station> readStations() {
     station.id = stationAndId.at(1);
     stations.append(station);
   }
-
-  file.close();
 
   std::sort(stations.begin(), stations.end());
 

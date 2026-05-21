@@ -114,14 +114,6 @@ void TransportClient::handleReply(QNetworkReply* reply,
   }
 
   const QJsonArray departuresArray = departuresValue.toArray();
-  if (departuresArray.isEmpty()) {
-    emit departuresInvalid(
-        QString("'departures' array is empty for station '%1' — "
-                "station may not exist or has no departures right now.")
-            .arg(stationId));
-    return;
-  }
-
   const QList<Departure> departures = extractDepartures(departuresArray);
 
   emit departuresReceived(stationId, departures);

@@ -2,14 +2,18 @@
 #include <QObject>
 
 #include "mainwindow.h"
-#include "station_reader.h"
 #include "transport_client.h"
 
 int main(int argc, char* argv[]) {
   QApplication a(argc, argv);
   MainWindow w;
   w.show();
-  readStations();
+
+  // not needed for now
+  // std::optional<QList<Station>> stations = readStations();
+  // if (!stations.has_value()) {
+  //   return -1;
+  // }
 
   TransportClient transportClient;
 
