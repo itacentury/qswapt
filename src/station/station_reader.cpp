@@ -1,9 +1,9 @@
-#include <QDir>
 #include <QFile>
 #include <QIODevice>
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
+#include <algorithm>
 
 #include "station.h"
 
@@ -18,7 +18,7 @@ std::optional<QList<Station>> readStations() {
   QList<Station> stations;
   while (!in.atEnd()) {
     QString line = in.readLine();
-    QStringList stationAndId = line.split(";");
+    QStringList stationAndId = line.split(';');
     if (stationAndId.length() != 2) {
       continue;
     }
