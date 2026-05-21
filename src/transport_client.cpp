@@ -21,14 +21,18 @@ void TransportClient::getDepartures(const QString& stationId) {
   request.setTransferTimeout(kRequestTimeoutMs);
 
   if (m_reply != nullptr) {
+    m_reply->disconnect(this);
     m_reply->abort();
-    delete m_reply;
-    m_reply = nullptr;
+    m_reply->deleteLater();
   }
 
   m_reply = m_manager->get(request);
+
   connect(m_reply, &QNetworkReply::finished, this,
-          [this, stationId]() { handleReply(m_reply, stationId); });
+          [this, reply = m_reply, stationId]() {
+            m_reply = nullptr;
+            handleReply(reply, stationId);
+          });
 }
 
 QList<Departure> TransportClient::extractDepartures(
