@@ -24,8 +24,8 @@ std::optional<QList<Station>> readStations() {
     }
 
     Station station;
-    station.name = stationAndId.at(0);
-    station.id = stationAndId.at(1);
+    station.name = stationAndId.at(0).trimmed();
+    station.id = stationAndId.at(1).trimmed();
     stations.append(station);
   }
 
