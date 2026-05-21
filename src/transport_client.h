@@ -1,6 +1,7 @@
 #ifndef TRANSPORT_CLIENT_H
 #define TRANSPORT_CLIENT_H
 
+#include <QLatin1StringView>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QObject>
@@ -25,10 +26,12 @@ class TransportClient : public QObject {
 
  private:
   QNetworkAccessManager* m_manager;
+  QNetworkReply* m_reply{nullptr};
+
   void handleReply(QNetworkReply* reply, const QString& stationId);
   static QList<Departure> extractDepartures(const QJsonArray& departuresJson);
 
-  inline static const QString kBaseUrl = "https://v6.db.transport.rest";
+  static constexpr QLatin1StringView kBaseUrl{"https://v6.db.transport.rest"};
   static constexpr int kRequestTimeoutMs = 5000;
 };
 

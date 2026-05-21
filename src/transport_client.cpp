@@ -1,13 +1,11 @@
 #include "transport_client.h"
 
-#include <QDateTime>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QScopedPointer>
 #include <QUrl>
-#include <QVariant>
 
 #include "departure.h"
 
@@ -22,9 +20,15 @@ void TransportClient::getDepartures(const QString& stationId) {
   request.setRawHeader("Accept", "application/json");
   request.setTransferTimeout(kRequestTimeoutMs);
 
-  auto* reply = m_manager->get(request);
-  connect(reply, &QNetworkReply::finished, this,
-          [this, reply, stationId]() { handleReply(reply, stationId); });
+  if (m_reply != nullptr) {
+    m_reply->abort();
+    delete m_reply;
+    m_reply = nullptr;
+  }
+
+  m_reply = m_manager->get(request);
+  connect(m_reply, &QNetworkReply::finished, this,
+          [this, stationId]() { handleReply(m_reply, stationId); });
 }
 
 QList<Departure> TransportClient::extractDepartures(
