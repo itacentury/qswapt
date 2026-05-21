@@ -4,7 +4,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QObject>
-#include <QStringView>
+#include <QString>
 
 #include "departure.h"
 
@@ -28,7 +28,7 @@ class TransportClient : public QObject {
   void handleReply(QNetworkReply* reply, const QString& stationId);
   static QList<Departure> extractDepartures(const QJsonArray& departuresJson);
 
-  static constexpr QStringView kBaseUrl = u"https://v6.db.transport.rest";
+  const QString kBaseUrl = "https://v6.db.transport.rest";
   static constexpr int kRequestTimeoutMs = 5000;
 };
 
