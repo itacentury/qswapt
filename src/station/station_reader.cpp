@@ -8,7 +8,7 @@
 #include "station.h"
 
 std::optional<QList<Station>> readStations() {
-  QString filename = QString(":/resources/stations.txt");
+  QString filename = QStringLiteral(":/resources/stations.txt");
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
     return std::nullopt;
