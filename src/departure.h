@@ -14,7 +14,7 @@ struct Departure {
   [[nodiscard]] QString toString() const {
     return QString(
                "line: %1, direction: %2, scheduled: %3, expected: %4, "
-               "delay: %5, cancelled: %6")
+               "delay: %5")
         .arg(line)
         .arg(direction)
         .arg(scheduled)
