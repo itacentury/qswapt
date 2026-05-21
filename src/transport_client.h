@@ -28,7 +28,7 @@ class TransportClient : public QObject {
   void handleReply(QNetworkReply* reply, const QString& stationId);
   static QList<Departure> extractDepartures(const QJsonArray& departuresJson);
 
-  const QString kBaseUrl = "https://v6.db.transport.rest";
+  inline static const QString kBaseUrl = "https://v6.db.transport.rest";
   static constexpr int kRequestTimeoutMs = 5000;
 };
 
