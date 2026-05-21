@@ -4,6 +4,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QScopedPointer>
 #include <QUrl>
 #include <QVariant>
@@ -32,16 +33,33 @@ QList<Departure> TransportClient::extractDepartures(
 
   for (const auto& jsonObject : departuresJson) {
     const QJsonObject obj = jsonObject.toObject();
+    const QJsonValue lineValue = obj.value("line");
+    const QJsonValue directionValue = obj.value("direction");
+    const QJsonValue plannedWhenValue = obj.value("plannedWhen");
+    const QJsonValue whenValue = obj.value("when");
+    const QJsonValue delayValue = obj.value("delay");
+
+    if (!lineValue.isObject() || !directionValue.isString() ||
+        !plannedWhenValue.isString()) {
+      continue;
+    }
+
+    const QJsonValue nameValue = lineValue.toObject().value("name");
+
+    if (!nameValue.isString()) {
+      continue;
+    }
+
     Departure departure;
-    departure.line = obj.value("line").toObject().value("name").toString();
-    departure.direction = obj.value("direction").toString();
-    departure.scheduled = obj.value("plannedWhen").toString();
-    departure.expected = obj.value("when").toString();
-    qint64 delayS =
-        QDateTime::fromString(departure.scheduled, Qt::DateFormat::ISODate)
-            .secsTo(QDateTime::fromString(departure.expected,
-                                          Qt::DateFormat::ISODate));
-    departure.delay = qRound(static_cast<double>(delayS) / 60.0);
+    departure.line = nameValue.toString();
+    departure.direction = directionValue.toString();
+    departure.scheduled = plannedWhenValue.toString();
+    departure.delay =
+        delayValue.isNull() ? 0 : qRound(delayValue.toDouble() / 60.0);
+    departure.cancelled = whenValue.isNull();
+    if (!whenValue.isNull()) {
+      departure.expected = whenValue.toString();
+    }
 
     departures.append(departure);
   }
@@ -67,34 +85,44 @@ void TransportClient::handleReply(QNetworkReply* reply,
   const QByteArray content = reply->readAll();
   auto jsonContent = QJsonDocument::fromJson(content);
   if (jsonContent.isNull()) {
-    emit departuresInvalid("Received JSON content is null");
+    emit departuresInvalid(QString("JSON parsing failed for station '%1': "
+                                   "response was empty or malformed. "
+                                   "Raw content: %2")
+                               .arg(stationId)
+                               .arg(QString::fromUtf8(content.left(200))));
     return;
   }
 
   if (!jsonContent.isObject()) {
-    emit departuresInvalid("Received JSON content is not an object");
+    emit departuresInvalid(
+        QString("Unexpected JSON structure for station '%1': "
+                "expected object, got %2")
+            .arg(stationId)
+            .arg(jsonContent.isArray() ? "array" : "unknown type"));
     return;
   }
 
   const QJsonObject rootObject = jsonContent.object();
-  const QJsonArray departuresJson = rootObject.value("departures").toArray();
-  QList<Departure> departures;
-
-  for (const auto& jsonObject : departuresJson) {
-    const QJsonObject obj = jsonObject.toObject();
-    Departure departure;
-    departure.line = obj.value("line").toObject().value("name").toString();
-    departure.direction = obj.value("direction").toString();
-    departure.scheduled = obj.value("plannedWhen").toString();
-    departure.expected = obj.value("when").toString();
-    departure.delay =
-        QDateTime::fromString(departure.scheduled, Qt::DateFormat::ISODate)
-            .secsTo(QDateTime::fromString(departure.expected,
-                                          Qt::DateFormat::ISODate)) /
-        60;
-
-    departures.append(departure);
+  const QJsonValue departuresValue = rootObject.value("departures");
+  if (!departuresValue.isArray()) {
+    emit departuresInvalid(
+        QString("Missing 'departures' array in response for station '%1'. "
+                "Available keys: [%2]")
+            .arg(stationId)
+            .arg(QStringList(rootObject.keys()).join(", ")));
+    return;
   }
+
+  const QJsonArray departuresArray = departuresValue.toArray();
+  if (departuresArray.isEmpty()) {
+    emit departuresInvalid(
+        QString("'departures' array is empty for station '%1' — "
+                "station may not exist or has no departures right now.")
+            .arg(stationId));
+    return;
+  }
+
+  const QList<Departure> departures = extractDepartures(departuresArray);
 
   emit departuresReceived(stationId, departures);
 }
