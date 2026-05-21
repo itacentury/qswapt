@@ -73,8 +73,6 @@ void TransportClient::handleReply(QNetworkReply* reply,
   if (reply->error() != QNetworkReply::NoError) {
     const int httpStatus =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "Reply error:" << reply->error() << "http:" << httpStatus
-             << "errorString:" << reply->errorString();
     emit departuresFailed(reply->error(), httpStatus,
                           QString::fromUtf8(reply->readAll()));
 
