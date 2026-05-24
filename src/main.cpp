@@ -1,5 +1,3 @@
-#include <qlogging.h>
-
 #include <QApplication>
 #include <QObject>
 
