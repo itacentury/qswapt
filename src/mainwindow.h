@@ -1,3 +1,6 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -8,15 +11,14 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
+  Q_DISABLE_COPY_MOVE(MainWindow)
 
  public:
-  MainWindow(QWidget* parent = nullptr);
+  explicit MainWindow(QWidget* parent = nullptr);
   ~MainWindow() override;
-  MainWindow(const MainWindow&) = delete;
-  MainWindow& operator=(const MainWindow&) = delete;
-  MainWindow(MainWindow&&) = delete;
-  MainWindow& operator=(MainWindow&&) = delete;
 
  private:
   Ui::MainWindow* ui{};
 };
+
+#endif

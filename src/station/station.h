@@ -5,7 +5,7 @@
 
 struct Station {
   QString name;
-  int id{};
+  QString id{};
 
   bool operator<(const Station& other) const {
     if (this->name == other.name) {

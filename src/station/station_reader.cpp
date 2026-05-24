@@ -1,35 +1,33 @@
-#include <QDir>
 #include <QFile>
-#include <QMessageBox>
+#include <QIODevice>
 #include <QString>
+#include <QStringList>
+#include <QTextStream>
+#include <algorithm>
 
 #include "station.h"
 
-QList<Station> readStations() {
-  QString filename = QString(":/resources/stations.txt");
+std::optional<QList<Station>> readStations() {
+  QString filename = QStringLiteral(":/resources/stations.txt");
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(0, "Error",
-                         QString("Could not open file: '%1'").arg(filename));
-    return {};
+    return std::nullopt;
   }
 
   QTextStream in(&file);
   QList<Station> stations;
   while (!in.atEnd()) {
     QString line = in.readLine();
-    QStringList stationAndId = line.split(";");
+    QStringList stationAndId = line.split(';');
     if (stationAndId.length() != 2) {
       continue;
     }
 
     Station station;
-    station.name = stationAndId[0];
-    station.id = stationAndId[1].toInt();
+    station.name = stationAndId.at(0).trimmed();
+    station.id = stationAndId.at(1).trimmed();
     stations.append(station);
   }
-
-  file.close();
 
   std::sort(stations.begin(), stations.end());
 
