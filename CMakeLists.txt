@@ -21,20 +21,22 @@ if(ENABLE_IPO)
     endif()
 endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Quick Network)
 
-qt_standard_project_setup()
+qt_standard_project_setup(REQUIRES 6.5)
+qt_policy(SET QTP0004 NEW)
 
-qt_add_executable(${PROJECT_NAME}
-    src/main.cpp
-    src/mainwindow.cpp
-    src/mainwindow.h
-    src/mainwindow.ui
-
-    src/departure.h
-
-    src/transport_client.h
-    src/transport_client.cpp
+qt_add_executable(${PROJECT_NAME} src/main.cpp)
+qt_add_qml_module(${PROJECT_NAME}
+    URI App.QSwapt
+    VERSION 1.0
+    QML_FILES
+        qml/Main.qml
+        qml/DepartureDelegate.qml
+    SOURCES
+        src/departure.h
+        src/transport_client.h
+        src/transport_client.cpp
 )
 
 qt_add_resources(${PROJECT_NAME}
@@ -46,7 +48,7 @@ add_subdirectory(src/station)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-        Qt6::Widgets
+        Qt6::Quick
         Qt6::Network
         project_warnings
         project_sanitizers
